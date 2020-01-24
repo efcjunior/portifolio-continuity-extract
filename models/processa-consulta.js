@@ -2,6 +2,10 @@ const sha256 = require('sha256')
 const fs = require('fs')
 const path = require('path')
 
+//let logs = [];
+//let log;
+let totalEncontrado = 0
+
 class Config {
     constructor(searchSize, continuitySize, matchesRequiredMinimum, matchesRequiredMaximum){
         this.searchSize = searchSize
@@ -32,9 +36,10 @@ class ValuePair {
     getVariations(left, right){
         let coefficient = this.getCoefficient(left, right)
         return  [
-            coefficient - 0.5,
-            coefficient,
-            coefficient + 0.5]
+            //coefficient - 0.5,
+            coefficient
+            //,coefficient + 0.5
+        ]
     }
 
     isSearchCoefficientMatches(left, right){
@@ -61,7 +66,9 @@ const getMatchesTotalFromSearch = function(arrayStored, arraySearch){
             }    
         }
     }
-    console.log("Total matches found: " + matchesCount)
+    console.log("total encontrado: " + matchesCount)
+    totalEncontrado = matchesCount
+    //log["d"] = `"${matchesCount}"`
     return matchesCount
 }
 
@@ -82,19 +89,27 @@ const processaConsulta = (dataSearch) => {
     let searchSize = config.searchSize
     let dataStored = createValuePairFromFile()               
     let resposta = JSON.parse(`{ "continuidade" : ["Nenhuma continuidade foi encontrada para busca realizada"]  }`)
-    for(let mathchesCount = config.matchesRequiredMaximum; mathchesCount >= config.matchesRequiredMinimum; mathchesCount--){      
-        console.log('continuitySize: ' + config.continuitySize)
+    //log = ["total continuidade", "total minimo requerido", "indices intervalo", "total encontrado", "indices intervalo encontrado"]
+    for(let mathchesCount = config.matchesRequiredMaximum; mathchesCount >= config.matchesRequiredMinimum; mathchesCount--){               
+        console.log('total continuidade: ' + config.continuitySize)
+        //log = {}
+        //log["a"] = `"${config.continuitySize}"`
         let rangeFirstIndex = config.continuitySize
         let rangeEndIndex = rangeFirstIndex + searchSize
-        console.log('MatchCountRequired: ' + mathchesCount)
+        console.log('total minimo requerido: ' + mathchesCount)
+        //log["b"] = `"${mathchesCount}"`
         while(true){
-            console.log('Searching between Index: ' + rangeFirstIndex + ' - ' + rangeEndIndex) 
+            log = {}
+            console.log('indices intervalo: ' + rangeFirstIndex + ' - ' + rangeEndIndex) 
+            //log["c"] = `"${rangeFirstIndex} - ${rangeEndIndex}"`
             arrayStored = dataStored.slice(rangeFirstIndex,rangeEndIndex)
             if(arrayStored.length < config.searchSize){
                 break
             }
             if(getMatchesTotalFromSearch(arrayStored,arraySearch) >= mathchesCount){      
-                console.log('Found between Index: ' + rangeFirstIndex + ' - ' + rangeEndIndex) 
+                console.log('indices intervalo encontrado: ' + rangeFirstIndex + ' - ' + rangeEndIndex) 
+                //log["e"] = `"${rangeFirstIndex} - ${rangeEndIndex}"`
+                //logs.push(log)
                 arrayStored.forEach(e=> console.log(e.dh + ' ' + e.left + ' ' + e.right))         
                 if(rangeFirstIndex >= config.continuitySize){
                     rangeEndIndex = rangeFirstIndex
@@ -104,12 +119,20 @@ const processaConsulta = (dataSearch) => {
                     .reverse().map(r => {
                         return `{"dh": "${r.dh}", "min": "${r.left}", "max": "${r.right}"}`.replace(new RegExp('\\.', 'g'),',')
                     })
-                    resposta = JSON.parse(`{ "continuidade" : [${result}]  }`)
+                    console.log(`{ "continuidade" : [${result}], "log" : ${totalEncontrado}  }`)
+                    
+                    /*let logging = logs.map(e => {
+                        console.log(e.a)
+                        console.log(`${e.c}`)
+                        return `{"a": ${e.a}, "b": ${e.b}, "c": ${e.c}, "d": ${e.d}, "e": ${e.e}}`
+                    })*/
+                    resposta = JSON.parse(`{ "continuidade" : [${result}], "log" : [${totalEncontrado}]  }`)
                     return resposta
                 }                
                 console.log('matches were found between: First Index ' + rangeFirstIndex + ' - End Index ' + rangeEndIndex + '. However, it does not have continuity.')
                 break
-            }            
+            }        
+            //logs.push(log)
             rangeFirstIndex++
             rangeEndIndex++
         }

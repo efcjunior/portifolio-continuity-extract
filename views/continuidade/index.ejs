@@ -23,9 +23,10 @@
         </form>  
     </div> 
     </div>
-    <% if (typeof continuidade != 'undefined') {%>
+    <% if (typeof resposta != 'undefined') {%>
     <div class="row col-sm-6"> 
         <div class="row col-sm-12">
+            <h3>Total Encontrado: <%= resposta.log%></h3>
         <div class="form-group">
             <table class="table table-bordered">
                 <tr>
@@ -33,7 +34,7 @@
                     <th>Min</th>
                     <th>Max</th>
                 </tr>
-                <% continuidade.forEach(e => { %>
+                <% resposta.continuidade.forEach(e => { %>
                 <tr>
                     <td><%- e.dh%></td>
                     <td><%- e.min%></td>
@@ -46,5 +47,5 @@
     </div>
     </div>
     <% } %>
-<%- include('../partials/footer.ejs')%>
 
+<%- include('../partials/footer.ejs')%>
