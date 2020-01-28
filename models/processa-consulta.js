@@ -90,6 +90,9 @@ const processaConsulta = (dataSearch) => {
         case '4':
             config = new Config(4,5,4,4)
             break;
+        case '3':
+            config = new Config(3,6,3,3)
+            break;
     }    
     let arraySearch = dataSearch
     let searchSize = config.searchSize
