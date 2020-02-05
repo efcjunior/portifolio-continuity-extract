@@ -14,7 +14,7 @@ const consulta = (req, res) => {
     })
     
     dataSearch.tipo = req.body.tipo
-
+    
     let resposta = continuidade.consulta(dataSearch) 
     res.render('continuidade/index', {resposta: resposta})
 }

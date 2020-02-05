@@ -21,7 +21,10 @@ class ValuePair {
         this.dh = fields[0]        
         this.left = parseFloat(fields[1].replace(/,/g, '.'))
         this.right = parseFloat(fields[2].replace(/,/g, '.'))
-        this.variations = this.getVariations(this.left,this.right)        
+        this.a = parseFloat(fields[3].replace(/,/g, '.'))
+        this.b = parseFloat(fields[4].replace(/,/g, '.'))
+        this.variations = this.getVariations(this.right,this.left)        
+        this.variationsAB = this.getVariations(this.a,this.b)   
         this.id = sha256(this.toString())
     }
 
@@ -29,12 +32,12 @@ class ValuePair {
         return this.dh + this.left + this.right
     }
 
-    getCoefficient(left, right){
-        return Math.abs(left - right)
+    getCoefficient(right, left){
+        return right - left
     }
 
-    getVariations(left, right){
-        let coefficient = this.getCoefficient(left, right)
+    getVariations(right, left){
+        let coefficient = this.getCoefficient(right, left)
         return  [
             //coefficient - 0.5,
             coefficient
@@ -42,8 +45,19 @@ class ValuePair {
         ]
     }
 
-    isSearchCoefficientMatches(left, right){
-        let searchCoefficient = this.getCoefficient(left, right)
+    isSearchCoefficientMatches(arraySearch){
+        
+        return this.isSearchCoefficientMatchesMaxMin(arraySearch[1], arraySearch[0]) 
+        && this.isSearchCoefficientMatchesAB(arraySearch[2], arraySearch[3])
+    }
+
+    isSearchCoefficientMatchesAB(right, left){
+        let searchCoefficient = this.getCoefficient(right, left)
+        return this.variationsAB.includes(searchCoefficient)
+    }
+
+    isSearchCoefficientMatchesMaxMin(right, left){
+        let searchCoefficient = this.getCoefficient(right, left)
         return this.variations.includes(searchCoefficient)
     }
 }
@@ -61,7 +75,7 @@ const getMatchesTotalFromSearch = function(arrayStored, arraySearch){
     let matchesCount = 0    
     if(arrayStored.length >=  arraySearch.length){
         for(let i = 0; i < arraySearch.length; i++){
-            if(arrayStored[i].isSearchCoefficientMatches(arraySearch[i][0], arraySearch[i][1])){
+            if(arrayStored[i].isSearchCoefficientMatches(arraySearch[i])){
                 matchesCount++
             }    
         }
@@ -88,13 +102,13 @@ const processaConsulta = (dataSearch) => {
             config = new Config(5,5,5,5)
             break;
         case '4':
-            config = new Config(4,5,4,4)
+            config = new Config(4,8,4,4)
             break;
         case '3':
-            config = new Config(3,7,3,3)
+            config = new Config(3,8,3,3)
             break;
         case '2':
-            config = new Config(2,7,2,2)
+            config = new Config(2,8,2,2)
             break;
     }    
     let arraySearch = dataSearch
