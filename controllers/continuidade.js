@@ -1,7 +1,7 @@
 const continuidade = require('../models/continuidade')
 
 const index = (req, res) => {
-    res.render('continuidade/index')
+    res.render('continuidade/index', {basededados: req.query.basededados})
 }
 
 const consulta = (req, res) => {
@@ -14,6 +14,7 @@ const consulta = (req, res) => {
     })
     
     dataSearch.tipo = req.body.tipo
+    dataSearch.basededados = req.body.basededados
     
     let resposta = continuidade.consulta(dataSearch) 
     res.render('continuidade/index', {resposta: resposta})

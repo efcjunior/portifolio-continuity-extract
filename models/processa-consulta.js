@@ -62,10 +62,13 @@ class ValuePair {
     }
 }
 
-const createValuePairFromFile = function (){
+const createValuePairFromFile = function (basededados){
     let values = []
+    let fileName = `import_${basededados}.txt`
+
+    console.log(fileName)
     
-    let file = fs.readFileSync(path.join(__dirname,'import.txt'),'utf8')
+    let file = fs.readFileSync(path.join(__dirname,fileName),'utf8')
     file.split('\n').forEach(line => {
         values.push(new ValuePair(line))
     })
@@ -113,7 +116,7 @@ const processaConsulta = (dataSearch) => {
     }    
     let arraySearch = dataSearch
     let searchSize = config.searchSize
-    let dataStored = createValuePairFromFile()               
+    let dataStored = createValuePairFromFile(dataSearch.basededados)               
     let resposta = JSON.parse(`{ "continuidade" : ["Nenhuma continuidade foi encontrada para busca realizada"]  }`)
     //log = ["total continuidade", "total minimo requerido", "indices intervalo", "total encontrado", "indices intervalo encontrado"]
     for(let mathchesCount = config.matchesRequiredMaximum; mathchesCount >= config.matchesRequiredMinimum; mathchesCount--){               
