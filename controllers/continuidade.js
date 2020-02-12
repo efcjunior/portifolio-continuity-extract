@@ -17,7 +17,7 @@ const consulta = (req, res) => {
     dataSearch.basededados = req.body.basededados
     
     let resposta = continuidade.consulta(dataSearch) 
-    res.render('continuidade/index', {resposta: resposta})
+    res.render('continuidade/index', {resposta: resposta, basededados: dataSearch.basededados})
 }
 
 module.exports = {
