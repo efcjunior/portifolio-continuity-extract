@@ -105,13 +105,13 @@ const processaConsulta = (dataSearch) => {
             config = new Config(5,5,5,5)
             break;
         case '4':
-            config = new Config(4,8,4,4)
+            config = new Config(4,10,4,4)
             break;
         case '3':
-            config = new Config(3,8,3,3)
+            config = new Config(3,10,3,3)
             break;
         case '2':
-            config = new Config(2,8,2,2)
+            config = new Config(2,10,2,2)
             break;
     }    
     let arraySearch = dataSearch
